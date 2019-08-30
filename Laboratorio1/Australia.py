@@ -46,10 +46,12 @@ class Country:
             self.cities[i].parent = -1
 
         # Do selected method
-        time = dt.now()
+        time = 0
         if method == 'greedy':
+            time = dt.now()
             self.__greedy(start, end)
         elif method == 'A*':
+            time = dt.now()
             self.__star_A(start, end)
         time = dt.now() - time
 
@@ -71,29 +73,11 @@ class Country:
         print('Time: {} s\n'.format(time))
 
     def __greedy(self, start, end):
-        pq = []  # Priority queue
-
-        cost = self.distance(self.cities[start], self.cities[end])
-        pq.append((cost, start))
-
-        while len(pq) > 0:
-            # Extract min from pq
-            pq.sort(key=lambda tup: tup[0], reverse=True)
-            node = pq.pop()
-
-            for successor in self.cities[node[1]].neighbor:
-                self.cities[successor].parent = node[1]
-
-                if successor == end:
-                    return successor
-
-                cost = self.distance(self.cities[start], self.cities[end])
-                pq.append((cost, successor))
-
-    def __star_A(self, start, end):
         # Start g and f cost for all nodes
-        g = [inf]*(len(self.cities))
-        f = [inf]*(len(self.cities))
+        g = [inf] * len(self.cities)
+        f = [inf] * len(self.cities)
+        # Everyone is open
+        closed = [False] * len(self.cities)
 
         pq = []  # Priority queue
 
@@ -107,17 +91,60 @@ class Country:
             pq.sort(key=lambda tup: tup[0], reverse=True)
             node = pq.pop()
 
-            if node[1] == end:
-                return
+            if not closed[node[1]]:
+                closed[node[1]] = True
 
-            for successor in self.cities[node[1]].neighbor:
-                cost_node_successor = self.distance(self.cities[node[1]], self.cities[successor])
-                cost_successor_end = self.distance(self.cities[successor], self.cities[end])
-                if f[successor] > g[node[1]] + cost_node_successor + cost_successor_end:
-                    g[successor] = g[node[1]] + cost_node_successor
-                    f[successor] = g[successor] + cost_successor_end
-                    self.cities[successor].parent = node[1]
-                    pq.append((f[successor], successor))
+                for successor in self.cities[node[1]].neighbor:
+
+                    cost_node_successor = self.distance(self.cities[node[1]], self.cities[successor])
+                    cost_successor_end = self.distance(self.cities[successor], self.cities[end])
+
+                    if not closed[successor]:
+                        self.cities[successor].parent = node[1]
+                        g[successor] = g[node[1]] + cost_node_successor
+                        f[successor] = cost_successor_end
+
+                        if successor == end:
+                            return
+
+                        pq.append((f[successor], successor))
+
+    def __star_A(self, start, end):
+        # Start g and f cost for all nodes
+        g = [inf]*(len(self.cities))
+        f = [inf]*(len(self.cities))
+        # Everyone is open
+        closed = [False] * len(self.cities)
+
+        pq = []  # Priority queue
+
+        g[start] = 0
+        f[start] = self.distance(self.cities[start], self.cities[end])
+
+        pq.append((f[start], start))
+
+        while len(pq) > 0:
+            # Extract min from pq
+            pq.sort(key=lambda tup: tup[0], reverse=True)
+            node = pq.pop()
+
+            if not closed[node[1]]:
+                closed[node[1]] = True
+
+                if node[1] == end:
+                    return
+
+                for successor in self.cities[node[1]].neighbor:
+
+                    cost_node_successor = self.distance(self.cities[node[1]], self.cities[successor])
+                    cost_successor_end = self.distance(self.cities[successor], self.cities[end])
+
+                    if not closed[successor] and f[successor] > g[node[1]] + cost_node_successor + cost_successor_end:
+                        g[successor] = g[node[1]] + cost_node_successor
+                        f[successor] = g[successor] + cost_successor_end
+
+                        self.cities[successor].parent = node[1]
+                        pq.append((f[successor], successor))
 
     @staticmethod
     def neighbor(x, max):
@@ -128,15 +155,15 @@ class Country:
         """
         ngb = []
         if x % 2 == 0:
+            if x > 1:
+                ngb.append(x - 1)
+            if x < max-1:
+                ngb.append(x + 2)
+        elif x % 2 == 1:
             if x > 2:
                 ngb.append(x - 2)
             if x < max:
                 ngb.append(x + 1)
-        elif x % 2 == 1:
-            if x > 1:
-                ngb.append(x - 1)
-            if x < max:
-                ngb.append(x + 2)
         return ngb
 
     @staticmethod
@@ -153,13 +180,13 @@ class Country:
 if __name__ == '__main__':
     ct = Country('australia.csv')
 
-    start = 5
-    end = 219
+    start = 219
+    end = 5
 
     ct.path(start, end, 'greedy')
     ct.path(start, end, 'A*')
 
-    for x in range(1, len(ct.cities)):
+    # for x in range(1, len(ct.cities)):
         # print('d:{:20} - x:{:3}'.format(Country.distance(ct.cities[x], ct.cities[219]), x), ct.cities[x])
         # print('x:{:3}'.format(x), ct.cities[x], '|parent: {}'.format(ct.cities[x].parent))
-        print('x:{:3}'.format(x), ct.cities[x])
+        # print('x:{:3}'.format(x), ct.cities[x])
