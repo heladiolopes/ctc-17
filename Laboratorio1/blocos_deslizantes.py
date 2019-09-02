@@ -1,4 +1,3 @@
-#import heapq
 from math import inf
 
 
@@ -109,16 +108,24 @@ class Box:
                     return False
         return True
 
+    def inpast(self, states):
+        for i in range(len(states)):
+            if self.equal(states[i]):
+                return True
+        return False
+
 
 class Game:
     def __init__(self, box, final_box):
         self.box = box
         self.final_box = final_box
 
+        self.past_states = []
         print("Greedy")
         cost_a = self.greedy()
         print("Custo Greedy: ", cost_a)
         print("")
+        self.past_states = []
         print("A*")
         cost_b = self.a_star()
         print("Custo A*: ", cost_b)
@@ -132,14 +139,15 @@ class Game:
         start_node.f = start_node.value.manhattan(goal_node.value)
         start_node.g = 0
         pq.append([start_node.f, start_node])
-        #heapq.heappush(pq, (start_node.f, start_node))
 
         while len(pq) > 0:
             pq.sort(key = lambda tup: tup[0], reverse=True)
             f, node = pq.pop()
-            #f, node = heapq.heappop(pq)
 
-            if node.closed is False:
+            if node.closed is False and node.value.inpast(self.past_states) is False:
+                #print(node.value.manhattan(goal_node.value))
+                self.past_states.append(node.value)
+
                 node.value.show()
                 node.closed = True
 
@@ -160,7 +168,6 @@ class Game:
                             return node_successor.g
 
                         pq.append([node_successor.f, node_successor])
-                        #heapq.heappush(pq, (node_successor.f, node_successor))
 
     def a_star(self):
         pq = []
@@ -171,14 +178,15 @@ class Game:
         start_node.f = start_node.value.manhattan(goal_node.value)
         start_node.g = 0
         pq.append([start_node.f, start_node])
-        # heapq.heappush(pq, (start_node.f, start_node))
 
         while len(pq) > 0:
             pq.sort(key=lambda tup: tup[0], reverse=True)
             f, node = pq.pop()
-            # f, node = heapq.heappop(pq)
 
-            if node.closed is False:
+            if node.closed is False and node.value.inpast(self.past_states) is False:
+                #print(node.value.manhattan(goal_node.value))
+                self.past_states.append(node.value)
+
                 node.value.show()
                 node.closed = True
 
@@ -198,7 +206,6 @@ class Game:
                         node_successor.f = node_successor.g + h
 
                         pq.append([node_successor.f, node_successor])
-                        # heapq.heappush(pq, (node_successor.f, node_successor))
 
 
 if __name__ == '__main__':
@@ -247,5 +254,5 @@ if __name__ == '__main__':
                       [73, 74, 75, 76, 77, 69, 78, 79, 80]]
     box_3 = Box(initialBoxes_3)
 
-    game_1 = Game(box_3, final_box)
+    game_1 = Game(box_1, final_box)
 
