@@ -29,7 +29,10 @@ class Country:
                       self.neighbor(city.loc[i]['id'], city.shape[0]))
             self.cities.append(ct)
 
+        self.bidirecional()
+
     def path(self, start, end, method):
+
         if type(start) == str:
             aux = 1
             while self.cities[aux].name != start:
@@ -50,10 +53,11 @@ class Country:
         if method == 'greedy':
             time = dt.now()
             self.__greedy(start, end)
+            time = dt.now() - time
         elif method == 'A*':
             time = dt.now()
             self.__star_A(start, end)
-        time = dt.now() - time
+            time = dt.now() - time
 
         # Getting path
         stack = [end]
@@ -67,9 +71,11 @@ class Country:
             d += 1.1 * self.distance(self.cities[path[i - 1]], self.cities[path[i]])
 
         # Print details
+        print('\n{} METHOD'.format(method.upper()))
         print('Path from {} to {} by id:'.format(self.cities[start].name, self.cities[end].name))
         print(path)
         print('Distance by {} method: {:.2f}'.format(method, d))
+        print('Steps: {} '.format(len(path)-1))
         print('Time: {} s\n'.format(time))
 
     def __greedy(self, start, end):
@@ -176,12 +182,19 @@ class Country:
         """
         return sqrt((city_1.lat - city_2.lat) ** 2 + (city_1.lng - city_2.lng) ** 2)
 
+    def bidirecional(self):
+        for i in range(1, len(self.cities)):
+            for ngb in self.cities[i].neighbor:
+                if i not in self.cities[ngb].neighbor:
+                    self.cities[ngb].neighbor.append(i)
+            self.cities[i].neighbor.sort()
+
 
 if __name__ == '__main__':
     ct = Country('australia.csv')
 
-    start = 219
-    end = 5
+    start = 'Alice Springs'
+    end = 'Yulara'
 
     ct.path(start, end, 'greedy')
     ct.path(start, end, 'A*')
