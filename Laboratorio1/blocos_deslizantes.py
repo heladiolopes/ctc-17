@@ -117,11 +117,11 @@ class Game:
 
         print("Greedy")
         cost_a = self.greedy()
-        print(cost_a)
+        print("Custo Greedy: ", cost_a)
         print("")
         print("A*")
         cost_b = self.a_star()
-        print(cost_b)
+        print("Custo A*: ", cost_b)
 
     def greedy(self):
         pq = []
@@ -156,6 +156,7 @@ class Game:
                         node_successor.f = h
 
                         if node_successor.value.equal(goal_node.value):
+                            node_successor.value.show()
                             return node_successor.g
 
                         pq.append([node_successor.f, node_successor])
@@ -235,5 +236,16 @@ if __name__ == '__main__':
                       [39, 75, 64, 19, 59, 76, 63, 79, 71]]
     box_2 = Box(initialBoxes_2)
 
-    game_1 = Game(box_1, final_box)
+    initialBoxes_3 = [[0, 1, 3, 4, 5, 6, 7, 8, 9],
+                      [10, 2, 12, 13, 14, 15, 16, 17, 18],
+                      [19, 11, 20, 22, 23, 24, 25, 26, 27],
+                      [28, 29, 21, 31, 32, 33, 34, 35, 36],
+                      [37, 38, 30, 40, 41, 42, 43, 44, 45],
+                      [46, 47, 39, 49, 59, 50, 51, 53, 54],
+                      [55, 56, 48, 57, 58, 60, 52, 61, 63],
+                      [64, 65, 66, 67, 68, 70, 71, 62, 72],
+                      [73, 74, 75, 76, 77, 69, 78, 79, 80]]
+    box_3 = Box(initialBoxes_3)
+
+    game_1 = Game(box_3, final_box)
 
