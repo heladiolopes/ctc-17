@@ -1,4 +1,4 @@
-from Arvore import Aprendizado, Maioria, MostraArvore
+from Arvore import Aprendizado, Maioria, MostraArvore, Classificar
 # from Leitura import Leitura
 
 
@@ -24,3 +24,7 @@ examples = [["Ensolarado", "Quente", "Alta", "Fraco", "NAO"],
 arvore = Aprendizado(examples, attributes, Maioria(examples))
 
 MostraArvore(arvore)
+
+print('\n')
+
+print(Classificar(arvore, ["Ensolarado", "Fria", "Alta", "Forte"]))

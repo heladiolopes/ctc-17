@@ -39,16 +39,10 @@ def Aprendizado(exemplos, atributos, padrao):
             exemplos_i = []
             for l in exemplos:
                 if l[melhor] == valor:
-                    lista = copy.deepcopy(l)
-                    lista.pop(melhor)
-                    exemplos_i.append(lista)
+                    exemplos_i.append(l)
 
-            atributos_i = {}
-            for k in atributos:
-                if k < melhor:
-                    atributos_i[k] = atributos[k]
-                elif k > melhor:
-                    atributos_i[k-1] = atributos[k]
+            atributos_i = copy.deepcopy(atributos)
+            atributos_i.pop(melhor)
 
             sub_arvore = Aprendizado(exemplos_i, atributos_i, m)
             arvore.filhos.append((valor, sub_arvore))
@@ -56,9 +50,27 @@ def Aprendizado(exemplos, atributos, padrao):
         return arvore
 
 
-def MostraArvore(node):
-    print('(', node.teste, end='')
+def tab(n):
+    s = ''
+    for i in range(n):
+        s += '\t'
+    return s
+
+
+def MostraArvore(node, n=0):
+    print(tab(n), '(', node.teste, sep='')
     for f in node.filhos:
-        print(f[0], end='')
-        MostraArvore(f[1])
-    print(')',end='')
+        print(tab(n+1), f[0], '')
+        MostraArvore(f[1], n+1)
+    print(tab(n), ')')
+
+
+def Classificar(node, elemento):
+
+    if len(node.filhos) == 0:
+        return node.teste
+
+    else:
+        for f in node.filhos:
+            if elemento[node.teste] == f[0]:
+                return Classificar(f[1], elemento)
