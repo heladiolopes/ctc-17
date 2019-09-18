@@ -47,7 +47,7 @@ def choose_attribute(attributes, examples):
         if gain > best_gain:
             best_gain = gain
             best_gain_index = attribute
-        print(attribute, gain)
+        # print(attribute, gain)
 
     return best_gain_index
 
