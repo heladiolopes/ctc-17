@@ -2,7 +2,7 @@ from collections import defaultdict
 
 
 def Leitura(file, sep):
-    f = open(file, 'r')
+    f = open(file, 'r', encoding="ISO-8859-1")
     lines = f.readlines()
 
     exemplos = []
@@ -79,5 +79,7 @@ def Atributos_Exemplos():
     return examples, attributes
 
 if __name__ == '__main__':
-    Atributos_Exemplos()
-
+    ex, at = Atributos_Exemplos()
+    # for l in ex:
+    #     print(l)
+    print(list(at.keys())[0])
