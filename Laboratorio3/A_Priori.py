@@ -47,8 +47,26 @@ def a_priori_median_ratings(train):
     return moviesRatingsDict, all_ratings
 
 
+def a_priori_rating(test, moviesRatingsDict, all_ratings):
+    test_rating = []
+
+    for i in range(len(test)):
+        movie_id = test[i][0]
+
+        if movie_id in moviesRatingsDict:
+            test_rating.append([movie_id, moviesRatingsDict[movie_id]])
+        else:
+            test_rating.append([movie_id, all_ratings])
+
+    return test_rating
+
+
 if __name__ == "__main__":
     examples = a_priori_examples()
     train, test = a_priori_train_test(examples)
     moviesRatingsDict, all_ratings = a_priori_median_ratings(train)
+    test_rating = a_priori_rating(test, moviesRatingsDict, all_ratings)
+
+    #for i in range(len(test)):
+    #    print(test[i][0], test[i][1], test_rating[i][0], test_rating[i][1])
 
