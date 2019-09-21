@@ -14,17 +14,14 @@ def a_priori_examples():
     return examples
 
 
-def a_priori_train_test():
-    examples = a_priori_examples()
+def a_priori_train_test(examples):
     percent = 0.6
     train, test = split_train_test(examples, percent)
 
     return train, test
 
 
-def a_priori_median_ratings():
-    train, test = a_priori_train_test()
-
+def a_priori_median_ratings(train):
     moviesRatingsDict = {}
     all_ratings = []
 
@@ -51,5 +48,7 @@ def a_priori_median_ratings():
 
 
 if __name__ == "__main__":
-    a_priori_median_ratings()
+    examples = a_priori_examples()
+    train, test = a_priori_train_test(examples)
+    moviesRatingsDict, all_ratings = a_priori_median_ratings(train)
 
