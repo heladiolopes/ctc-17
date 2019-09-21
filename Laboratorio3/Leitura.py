@@ -62,7 +62,6 @@ def Atributos_Exemplos():
 
         examples[i][-1] = rating
 
-
     attributes = defaultdict(list)
     for i in range(len(users)):
         for k in range(1, 4):
