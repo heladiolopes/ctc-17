@@ -1,6 +1,8 @@
 from Arvore import Aprendizado, Maioria, MostraArvore, Classificar
 from Leitura import Atributos_Exemplos
 from datetime import datetime as dt
+import os
+from Split import split_train_test
 
 t = dt.now()
 # attributes = {0: ["Ensolarado", "Nublado", "Chuvoso"], 1: ["Quente", "Boa", "Fria"],
@@ -23,12 +25,34 @@ t = dt.now()
 examples, attributes = Atributos_Exemplos()
 print(dt.now() - t)
 
+# t = dt.now()
+# arvore = Aprendizado(examples, attributes, Maioria(examples))
+# print(dt.now() - t)
+
+# MostraArvore(arvore)
+
+"""
+Segmentar dados
+"""
+train, test = split_train_test(examples, 0.6)
+print('Dividido')
+
 t = dt.now()
-arvore = Aprendizado(examples, attributes, Maioria(examples))
+arvore = Aprendizado(train, attributes, Maioria(train))
 print(dt.now() - t)
 
-MostraArvore(arvore)
-#
-# print('\n')
-print('OK')
+result = []
+for line in test:
+    result.append(Classificar(arvore, line))
+
+acerto = 0
+for i in range(len(test)):
+    print('ESPERADO: {:5} | OBTIDO: {:5}'.format(test[i][-1], result[i]))
+    if result[i] == test[i][-1]:
+        acerto += 1
+
+print(acerto/len(result))
+
+
+os.system('play -nq -t alsa synth {} sine {}'.format(0.3, 440))
 # print(Classificar(arvore, ["Ensolarado", "Fria", "Alta", "Forte"]))

@@ -34,18 +34,18 @@ def Aprendizado(exemplos, atributos, padrao):
         # print('{:10} ->'.format('PADRÂO'), padrao)
         return Node(padrao)
     elif not diff:
-        print('{:10} ->'.format('ELEMENTO'), elemento)
+        # print('{:10} ->'.format('ELEMENTO'), elemento)
         return Node(elemento)
     elif len(atributos) == 0:
         x = Maioria(exemplos)
-        print('{:10} ->'.format('MAIORIA'), x)
+        # print('{:10} ->'.format('MAIORIA'), x)
         return Node(x)
     else:
         melhor = choose_attribute(atributos, exemplos)
-        print('{:10} ->'.format('MELHOR'), melhor)
-        if melhor == -1:
-            melhor = list(atributos.keys())[0]
-            print('{:10} ->'.format('CORRIGIDO'), melhor, atributos[melhor])
+        # print('{:10} ->'.format('MELHOR'), melhor)
+        # if melhor == -1:
+        #     melhor = list(atributos.keys())[0]
+        #     print('{:10} ->'.format('CORRIGIDO'), melhor, atributos[melhor])
 
         arvore = Node(melhor)
         m = Maioria(exemplos)
