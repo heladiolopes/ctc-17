@@ -1,5 +1,6 @@
 from Leitura import Leitura
 from Split import split_train_test
+from collections import defaultdict
 
 
 def a_priori_examples():
@@ -21,6 +22,27 @@ def a_priori_train_test(examples):
     return train, test
 
 
+def separate_groups(ratings):
+    groups = defaultdict(int)
+
+    for i in range(len(ratings)):
+        groups[ratings[i]] += 1
+
+    return groups
+
+
+def most_common(groups):
+    most_common_number = -1
+    most_common_value = -1
+
+    for value in groups:
+        if groups[value] > most_common_number:
+            most_common_number = groups[value]
+            most_common_value = value
+
+    return most_common_value
+
+
 def a_priori_median_ratings(train):
     moviesRatingsDict = {}
     all_ratings = []
@@ -36,11 +58,12 @@ def a_priori_median_ratings(train):
         all_ratings.append(rating)
 
     for key in moviesRatingsDict:
-        moviesRatingsDict[key].sort()
-        moviesRatingsDict[key] = moviesRatingsDict[key][len(moviesRatingsDict[key])//2]
-        #print(key, moviesRatingsDict[key])
-    all_ratings.sort()
-    all_ratings = all_ratings[len(all_ratings)//2]
+        groups = separate_groups(moviesRatingsDict[key])
+        mode = most_common(groups)
+        moviesRatingsDict[key] = mode
+    all_groups = separate_groups(all_ratings)
+    all_mode = most_common(all_groups)
+    all_ratings = all_mode
 
     #print(moviesRatingsDict, all_ratings)
 
@@ -68,5 +91,5 @@ if __name__ == "__main__":
     test_rating = a_priori_rating(test, moviesRatingsDict, all_ratings)
 
     #for i in range(len(test)):
-    #    print(test[i][0], test[i][1], test_rating[i][0], test_rating[i][1])
+    #    print(test[i][1], test_rating[i][1])
 
