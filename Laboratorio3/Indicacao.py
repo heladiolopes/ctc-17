@@ -17,7 +17,7 @@ def user_info():
 
     print("Digite a idade (0-100)!")
     # age = input()
-    age = 32
+    age = 21
 
     for key in ages:
         if ages[key][0] <= age <= ages[key][1]:
@@ -26,7 +26,7 @@ def user_info():
 
     print("Digite a profissao!")
     # occupation = input()
-    occupation = "farmer"
+    occupation = "technician/engineer"
 
     for key in occupations:
         if occupation == occupations[key]:
@@ -103,5 +103,5 @@ if __name__ == "__main__":
 
     ratings.sort(key=lambda x: x[1], reverse=True)
     n = input('Quantas recomendações você deseja: ')
-    for i in range(n):
+    for i in range(int(n)):
         print('{:2}: {:50} -> {}'.format(i+1, ratings[i][0], ratings[i][1]))
