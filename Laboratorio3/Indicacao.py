@@ -11,22 +11,19 @@ def user_info():
                   14: "sales/marketing", 15: "scientist", 16: "self-employed", 17: "technician/engineer",
                   18: "tradesman/craftsman", 19: "unemployed", 20: "writer"}
 
-    print("Digite o genero (M/F)!")
-    # genre = input()
-    genre = "M"
+    genre = input("Digite o genero (M/F): ")
+    # genre = "M"
 
-    print("Digite a idade (0-100)!")
-    # age = input()
-    age = 21
+    age = int(input("Digite a idade (0-100): "))
+    # age = 21
 
     for key in ages:
         if ages[key][0] <= age <= ages[key][1]:
             age = str(key)
             break
 
-    print("Digite a profissao!")
-    # occupation = input()
-    occupation = "technician/engineer"
+    occupation = input("Digite a profissao: ")
+    # occupation = "technician/engineer"
 
     for key in occupations:
         if occupation == occupations[key]:
