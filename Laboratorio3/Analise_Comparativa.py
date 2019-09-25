@@ -65,13 +65,13 @@ class Analise:
 
         print('\t\t', end='')
         for i in range(self.classe):
-            print('  [{}]  '.format(i+1), end='', sep='')
+            print('  [{}]   '.format(i+1), end='', sep='')
         print()
 
         for i in range(self.classe):
             print('[{}] -> '.format(i+1), end='', sep='')
             for elemento in matriz[i]:
-                print('| {:4} '.format(elemento), end='', sep='')
+                print('| {:5} '.format(elemento), end='', sep='')
             print('|')
 
         print('\nErro quadrático médio:', self.erro_quad_med())

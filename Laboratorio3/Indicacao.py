@@ -76,22 +76,32 @@ def create_examples(p_genre, age, occupation):
 
 def rate_movies(examples):
     train, attributes = Atributos_Exemplos()
+    train, _ = split_train_test(train, 0.7)
     test = examples
 
-    print(train)
-    print(test)
+    # print(len(train), len(train[0]))
+    # print(train[0])
+    # print(len(test), len(test[0]))
+    # print(test[0])
 
     arvore = Aprendizado(train, attributes, Maioria(train))
 
+    # print('Aprendido')
+    ratings = []
     for line in test:
-        a = Classificar(arvore, line)
-        line[-1] = a
+        ratings.append((line[-2], int(Classificar(arvore, line))))
+        # line[-1] = a
 
-    print(test)
+    return ratings
+    # print(test)
 
 
 if __name__ == "__main__":
     genre, age, occupation = user_info()
     examples = create_examples(genre, age, occupation)
-    rate_movies(examples)
+    ratings = rate_movies(examples)
 
+    ratings.sort(key=lambda x: x[1], reverse=True)
+    n = input('Quantas recomendações você deseja: ')
+    for i in range(n):
+        print('{:2}: {:50} -> {}'.format(i+1, ratings[i][0], ratings[i][1]))
