@@ -14,6 +14,8 @@ cell_values = {
     'G': 100,   # Gold
 }
 
+movement_cost = -0.1
+
 board = [
     ['0', 'P', '0', '0', '0', '0', 'P', '0'],
     ['W', 'G', 'P', '0', '0', '0', 'P', '0'],
@@ -31,11 +33,9 @@ class Tabuleiro:
         self.__start_game()
 
     def __start_position(self):
-        while True:
-            x = rd.randint(0, self.size[0])
-            y = rd.randint(0, self.size[1])
-            if self.tab[x][y] == '0':
-                return x, y
+        x = rd.randint(0, self.size[0]-1)
+        y = rd.randint(0, self.size[1]-1)
+        return x, y
 
     def __start_game(self):
         # self.tab = self.init_tab
@@ -48,16 +48,20 @@ class Tabuleiro:
 
     def sucessors(self, position):
         cds = [
-            (position[0], position[1]),
+            # (position[0], position[1]),
             (position[0], position[1] - 1),
             (position[0], position[1] + 1),
             (position[0] - 1, position[1]),
             (position[0] + 1, position[1])
         ]
         sc = []
+        parede = False
         for cd in cds:
             if self.is_valid(cd):
                 sc.append(cd)
+            elif not parede:
+                sc.append((position[0], position[1]))
+                parede = True
         return sc
 
     def next(self, position, action):
@@ -70,7 +74,7 @@ class Tabuleiro:
         elif action == 'LEFT':
             return position[0], position[1] - 1
         else:
-            return position
+            return self.__start_position()
 
     def __mistake(self, position, action, mov='L'):
         k = 1 if(mov == 'L') else -1
@@ -97,7 +101,7 @@ class Tabuleiro:
         if not_valid_positions or nonadjacent_movement or diagonal_movement:
             return 0.0
 
-        if action == 'STOP':
+        if action == 'START':
             if di == 0 and dj == 0:
                 return 1.0
             else:
@@ -110,7 +114,12 @@ class Tabuleiro:
         elif next == self.__mistake(position, action, 'R'):
             return 0.1
 
+        return 0.0
+
     def reward(self, position, action):
+        # if not self.is_valid(self.next(position, action)):
+        #     return -1.0
+
         field = self.tab[position[0]][position[1]]
         return cell_values[field]
 
