@@ -51,6 +51,12 @@ def best_policy(tabuleiro, value):
             current = (i, j)
             if tabuleiro.tab[i][j] != '0':
                 cell_text = 'START'
+                if tabuleiro.tab[i][j] == 'W':
+                    cell_text = 'Wumpus'
+                elif tabuleiro.tab[i][j] == 'G':
+                    cell_text = 'Gold'
+                else:
+                    cell_text = 'Pit'
             else:
                 maxValue = -inf
                 cell_text = ''
@@ -59,7 +65,8 @@ def best_policy(tabuleiro, value):
                     if next in tabuleiro.sucessors(current) and value[next[0], next[1]] > maxValue:
                         maxValue = value[next[0], next[1]]
                         cell_text = action
-            print('{:5} '.format(cell_text), end='')
+            cell_text = cell_text.center(9)
+            print(cell_text, end='')
             if j < sz[1] - 1:
                 print(',', end='')
         print(']')

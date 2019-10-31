@@ -107,6 +107,39 @@ class Tabuleiro:
             else:
                 return 0.0
 
+        quina = {
+            (0,0): {'U': 0.9, 'D': 0.0, 'L': 0.8, 'R': 0.0},
+            (0, self.size[1]): {'U': 0.8, 'D': 0.0, 'L': 0.0, 'R': 0.9},
+            (self.size[0], self.size[1]): {'U': 0.0, 'D': 0.9, 'L': 0.0, 'R': 0.8},
+            (self.size[0], 0): {'U': 0.0, 'D': 0.8, 'L': 0.9, 'R': 0.0},
+        }
+        borda = [
+            {'U': 0.7, 'D': 0.0, 'L': 0.1, 'R': 0.2},
+            {'U': 0.1, 'D': 0.2, 'L': 0.0, 'R': 0.7},
+            {'U': 0.0, 'D': 0.7, 'L': 0.2, 'R': 0.1},
+            {'U': 0.2, 'D': 0.1, 'L': 0.7, 'R': 0.0},
+        ]
+
+        if di == 0 and dj == 0:
+            h = (position[0] == 0) or (position[0] == self.size[0])
+            v = (position[1] == 0) or (position[1] == self.size[1])
+            if h and v:  # quina
+                return quina[position][action[0]]
+
+            elif h and not v:  # borda
+                # 0 ou 2
+                if position[0] == 0:
+                    return borda[0][action[0]]
+                else:
+                    return borda[2][action[0]]
+
+            elif not h and v:
+                # 1 e 3
+                if position[1] == 0:
+                    return borda[3][action[0]]
+                else:
+                    return borda[1][action[0]]
+
         if next == self.next(position, action):
             return 0.7
         elif next == self.__mistake(position, action, 'L'):
@@ -116,9 +149,10 @@ class Tabuleiro:
 
         return 0.0
 
+
     def reward(self, position, action):
-        # if not self.is_valid(self.next(position, action)):
-        #     return -1.0
+        if not self.is_valid(self.next(position, action)):
+            return -1.0
 
         field = self.tab[position[0]][position[1]]
         return cell_values[field]
