@@ -5,37 +5,39 @@ from Tabuleiro import *
 # actions = {'UP':0, 'DOWN':1, 'LEFT':2, 'RIGHT':3, 'START':4}
 
 
-def value_iteration(tabuleiro, n_it = 10000, gamma = 0.98):
+def value_iteration(tabuleiro, n_it=3, gamma=1):
     sz = tabuleiro.size
     value = np.zeros(sz)
 
     for _ in range(n_it):
         new_value = np.zeros(sz)
-        maxDif = -inf
+
         for i in range(sz[0]):
             for j in range(sz[1]):
                 current = (i, j)
 
                 actions = {'UP': 0, 'DOWN': 1, 'LEFT': 2, 'RIGHT': 3, 'START': 4}
 
-                # if tabuleiro.tab[current[0]][current[1]] == '0':
-                #     actions = {'UP': 0, 'DOWN': 1, 'LEFT': 2, 'RIGHT': 3}
-                # else:
-                #     actions = {'START': 0}
+                r = tabuleiro.reward(current)
 
                 value_k = np.zeros(len(actions))
 
+                # Equação de bellman
                 for action in actions.keys():
-                    r = tabuleiro.reward(current, action)
                     for next in tabuleiro.sucessors(current):
                         transition_prob = tabuleiro.transition_prob(current, action, next)
-                        value_k[actions[action]] += transition_prob * (r + gamma * value[next[0], next[1]])
+                        value_k[actions[action]] += transition_prob * value[next[0], next[1]]
+
                 maxValue = max(value_k)
-                maxDif = max(maxDif, fabs(maxValue - value[i, j]))
-                new_value[i][j] = maxValue
-        # print(new_value)
+                new_value[i][j] = r + gamma * maxValue
+
+        maxDif = -inf
+        for i in range(sz[0]):
+            for j in range(sz[1]):
+                maxDif = max(maxDif, fabs(value[i,j] - new_value[i, j]))
         value = new_value
-        if maxDif < 1.0e-5:
+
+        if maxDif < 5:
             break
 
     return value
@@ -69,18 +71,21 @@ def best_policy(tabuleiro, value):
             print(cell_text, end='')
             if j < sz[1] - 1:
                 print(',', end='')
-        print(']')
+        print(']\n')
 
 
 def print_values(value):
     for i in range(len(value)):
         for j in range(len(value[i])):
-            print('{:10.4f}'.format(value[i][j]), end=' ')
-        print('')
+            print('{:8.2f}'.format(value[i][j]), end=' ')
+        print('\n')
+    print('--------------------------------------------------------------')
 
 
 if __name__ == '__main__':
     world = Tabuleiro(board)
     value = value_iteration(world)
+    print('')
     print_values(value)
+    print('')
     best_policy(world, value)

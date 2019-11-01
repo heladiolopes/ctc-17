@@ -1,4 +1,5 @@
 import random as rd
+
 """
 Legenda:
     '0': 
@@ -8,10 +9,10 @@ Legenda:
 """
 
 cell_values = {
-    '0': -0.1,  # Empty space
-    'P': -50,   # Pit
+    '0': 0,  # Empty space
+    'P': -50,  # Pit
     'W': -100,  # Wumpus
-    'G': 100,   # Gold
+    'G': 100,  # Gold
 }
 
 movement_cost = -0.1
@@ -26,20 +27,17 @@ board = [
 
 class Tabuleiro:
     def __init__(self, init_tab):
-        # self.init_tab = init_tab
-        self.position = None
         self.tab = init_tab
         self.size = (len(init_tab), len(init_tab[0]))
         self.__start_game()
 
-    def __start_position(self):
-        x = rd.randint(0, self.size[0]-1)
-        y = rd.randint(0, self.size[1]-1)
+    def randon_position(self):
+        x = rd.randint(0, self.size[0] - 1)
+        y = rd.randint(0, self.size[1] - 1)
         return x, y
 
     def __start_game(self):
-        # self.tab = self.init_tab
-        self.position = self.__start_position()
+        self.position = self.randon_position()
 
     def is_valid(self, position):
         if position[0] < 0 or position[0] >= self.size[0] or position[1] < 0 or position[1] >= self.size[1]:
@@ -47,8 +45,14 @@ class Tabuleiro:
         return True
 
     def sucessors(self, position):
+        if self.tab[position[0]][position[1]] != '0':
+            sc = []
+            for i in range(self.size[0]):
+                for j in range(self.size[1]):
+                    sc.append((i, j))
+            return sc
+
         cds = [
-            # (position[0], position[1]),
             (position[0], position[1] - 1),
             (position[0], position[1] + 1),
             (position[0] - 1, position[1]),
@@ -74,23 +78,27 @@ class Tabuleiro:
         elif action == 'LEFT':
             return position[0], position[1] - 1
         else:
-            return self.__start_position()
+            return self.position
 
     def __mistake(self, position, action, mov='L'):
-        k = 1 if(mov == 'L') else -1
+        k = 1 if (mov == 'L') else -1
 
         if action == 'UP':
-            return position[0], position[1] - 1*k
+            return position[0], position[1] - 1 * k
         elif action == 'RIGHT':
-            return position[0] - 1*k, position[1]
+            return position[0] - 1 * k, position[1]
         elif action == 'DOWN':
-            return position[0], position[1] + 1*k
+            return position[0], position[1] + 1 * k
         elif action == 'LEFT':
-            return position[0] + 1*k, position[1]
+            return position[0] + 1 * k, position[1]
         else:
             return position
 
     def transition_prob(self, position, action, next):
+
+        if self.tab[position[0]][position[1]] != '0':
+            return 1.0 / (self.size[0] * self.size[1])
+
         di = next[0] - position[0]
         dj = next[1] - position[1]
 
@@ -108,7 +116,7 @@ class Tabuleiro:
                 return 0.0
 
         quina = {
-            (0,0): {'U': 0.9, 'D': 0.0, 'L': 0.8, 'R': 0.0},
+            (0, 0): {'U': 0.9, 'D': 0.0, 'L': 0.8, 'R': 0.0},
             (0, self.size[1]): {'U': 0.8, 'D': 0.0, 'L': 0.0, 'R': 0.9},
             (self.size[0], self.size[1]): {'U': 0.0, 'D': 0.9, 'L': 0.0, 'R': 0.8},
             (self.size[0], 0): {'U': 0.0, 'D': 0.8, 'L': 0.9, 'R': 0.0},
@@ -149,22 +157,20 @@ class Tabuleiro:
 
         return 0.0
 
+    def reward(self, position):
+        x = 0
 
-    def reward(self, position, action):
-        if not self.is_valid(self.next(position, action)):
-            return -1.0
+        # if not self.is_valid(self.next(position, action)):
+        #     x = -1.0
 
         field = self.tab[position[0]][position[1]]
-        return cell_values[field]
+        return x + cell_values[field] + movement_cost
 
     def __str__(self):
         s = ''
         for i in range(4):
             for j in range(8):
-                if i == self.position[0] and j == self.position[1]:
-                    s += 'R '
-                else:
-                    s += self.tab[i][j] + ' '
+                s += self.tab[i][j] + ' '
             s += '\n'
 
         return s
